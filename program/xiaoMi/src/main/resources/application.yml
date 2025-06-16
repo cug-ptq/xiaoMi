@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: xiaomi
+  profiles:
+        active: dev
+#    active: prod

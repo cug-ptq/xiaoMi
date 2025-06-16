@@ -1,14 +1,14 @@
 package com.example.xiaomi.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 public class TestController {
 
-    public static void init(){
-        System.out.println("init");
-    }
 
+    @RequestMapping(value = "/test")
     public String test(){
         return "test";
     }
