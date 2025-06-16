@@ -63,6 +63,13 @@ public class SalaryBudgetDTO {
     @ExcelProperty({"年度绩效考核等级", "批复数"})
     private String approval4;
 
+    /** 预算申报21 */
+    @ExcelProperty({"单列合计", "预算申报数"})
+    private String declare22;
+    /** 批复数21 */
+    @ExcelProperty({"单列合计", "批复数"})
+    private String approval22;
+
     /** 预算申报5 */
     @ExcelProperty({"一、实施兼并重组处僵治困、新设立（减少）企业等预算管理范围变化", "预算申报数"})
     private String declare5;

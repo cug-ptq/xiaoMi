@@ -1,3 +1,5 @@
+
+
 viewModel.on('beforeSearch', function (args) {
     debugger
     let filterData = viewModel.getCache('FilterViewModel');
@@ -66,7 +68,6 @@ gridModel.on('afterSetDataSource', (params) => {
         gridModel.setCellValue(index, 'zuzhibumen', row.zuzhibumenbianma);
     });
 });
-
 
 gridModel.on("afterCellValueChange", function (data) {//  监听单元格值改变
     const rowIndex = data.rowIndex;
@@ -157,7 +158,16 @@ gridModel.on("afterCellValueChange", function (data) {//  监听单元格值改�
     }
 });
 
+
 // 监听表格模型的值改变事件
+viewModel.getGridModel().on('afterValueChange', function (value) {
+    // 在这里处理多个字段值改变的逻辑
+    // 可以通过 value 参数获取改变后的值
+    // 可以通过 this 获取当前的字段对象
+    // 可以通过 this.get('字段编码') 获取当前字段的值
+    // 可以通过 this.get('字段编码').getFromModel() 获取当前字段的模型对象
+    this.get('zhiweinianxinjishu').getFromModel().on('afterValueChange', function (value) { }) // 监听当前字段的值改变事件
+});
 
 viewModel.get('btnAddRow') && viewModel.get('btnAddRow').on('click', function (data) {
     // 新增
@@ -173,34 +183,8 @@ viewModel.get('btnAddRow') && viewModel.get('btnAddRow').on('click', function (d
 
         }
     }
-    viewModel.get('button13nd').setVisible(false);
-    viewModel.get('button20kb').setVisible(false);
-    viewModel.get('btnExportDrop').setVisible(false);
-    viewModel.get('btnExport').setVisible(false);
-    viewModel.get('button32nd').setVisible(false);
-    viewModel.get('btnAddRow').setVisible(false);
 
 });
-
-
-viewModel.get('button29tg') && viewModel.get('button29tg').on('click', function (data){
-    viewModel.get('button13nd').setVisible(true);
-    viewModel.get('button20kb').setVisible(true);
-    viewModel.get('btnExportDrop').setVisible(true);
-    viewModel.get('btnExport').setVisible(true);
-    viewModel.get('button32nd').setVisible(true);
-    viewModel.get('btnAddRow').setVisible(true);
-});
-
-viewModel.get('button30xc') && viewModel.get('button30xc').on('click', function (data){
-    viewModel.get('button13nd').setVisible(true);
-    viewModel.get('button20kb').setVisible(true);
-    viewModel.get('btnExportDrop').setVisible(true);
-    viewModel.get('btnExport').setVisible(true);
-    viewModel.get('button32nd').setVisible(true);
-    viewModel.get('btnAddRow').setVisible(true);
-});
-
 
 viewModel.get('button9xb') && viewModel.get('button9xb').on('click', function (data) {
     // 编辑
@@ -324,8 +308,8 @@ viewModel.get('button20kb') && viewModel.get('button20kb').on('click', function 
     // const exportUrl = `${prefix}/uniformdata/sanxia-be/api/payrollProcessing/export`
     // const exportUrl = `${prefix}/sanxia-be/api/payrollProcessing/export`
     // const exportUrl = `${prefix}sanxia-be/api/payrollProcessing/export`
-    // const exportUrl = `http://uptest.ctg.com.cn/sanxia-be/api/payrollProcessing/export`
-    const exportUrl = 'https://uptest.ctg.com.cn/sanxia-be/api/payrollProcessing/export';
+    // const exportUrl = `http://ehr.ctg.com.cn/sanxia-be/api/payrollProcessing/export`
+    const exportUrl = `https://ehr.ctg.com.cn/sanxia-be/api/payrollProcessing/export`
     // 显示加载提示
     // cb.utils.showLoading('正在下载数据...');
 
@@ -335,7 +319,7 @@ viewModel.get('button20kb') && viewModel.get('button20kb').on('click', function 
     };
     console.log(cb.rest.ajax);
     // 发送 POST 请求
-    // cb.rest.ajax('https://uptest.ctg.com.cn/sanxia-be/api/payrollProcessing/export', { params, method: 'post', domainKey: 'sanxia', responseType: 'blob', callback:(err, res) => {
+    // cb.rest.ajax('https://ehr.ctg.com.cn/sanxia-be/api/payrollProcessing/export', { params, method: 'post', domainKey: 'sanxia', responseType: 'blob', callback:(err, res) => {
     cb.rest.ajax(exportUrl, {
         params, method: 'post', domainKey: 'sanxia', responseType: 'blob', callback: (err, res) => {
             if (err) {
@@ -378,257 +362,3 @@ viewModel.get('button20kb') && viewModel.get('button20kb').on('click', function 
         }
     });
 })
-
-
-
-
-
-// 在视图模型初始化时执行自定义逻辑
-viewModel.on('customInit', function (data) {
-    debugger
-    // 标记脚本是否已加载完成，用于防止重复加载
-    let scriptLoaded = false;
-
-    /**
-     * 动态加载外部 JS 脚本的方法
-     * @param {string} src - 要加载的脚本地址
-     * @param {function} callback - 加载完成后执行的回调函数
-     */
-    const loadScript = (src, callback) => {
-        const script = document.createElement('script'); // 创建 <script> 元素
-        script.src = src; // 设置脚本路径
-        script.onload = () => {
-            // 当脚本加载完成后执行回调
-            scriptLoaded = true;
-            callback && callback();
-        };
-        document.body.appendChild(script); // 将脚本插入到页面中
-    };
-
-    /**
-     * 第一步：加载 Excel 解析所需的 xlsx 库
-     * 注意：xlsx.core.min.js 是核心库
-     */
-    loadScript('/iuap-yonbuilder-runtime/opencomponentsystem/public/hrkq-dev/xlsx.core.min.js?domainKey=developplatform', () => {
-        /**
-         * 第二步：加载 xlsx.common.extend.js 扩展库（可选，根据项目需要）
-         */
-        loadScript('/iuap-yonbuilder-runtime/opencomponentsystem/public/hrkq-dev/xlsx.common.extend.js?domainKey=developplatform', () => {
-            /**
-             * 确保两个库都加载完成后再绑定按钮点击事件
-             */
-            if (viewModel.get('button32nd')) {
-                /**
-                 * 给按钮 button32nd 添加点击事件监听器
-                 */
-                viewModel.get('button32nd').on('click', function () {
-                    /**
-                     * 创建一个隐藏的文件输入框，用于选择Excel文件
-                     */
-                    const fileInput = document.createElement('input');
-                    fileInput.type = 'file'; // 文件类型
-                    fileInput.accept = '.xlsx,.xls'; // 限制只能选择Excel格式文件
-                    fileInput.style.display = 'none'; // 隐藏该元素
-
-                    /**
-                     * 监听文件选择变化事件
-                     */
-                    fileInput.addEventListener('change', function (e) {
-                        const file = e.target.files[0]; // 获取用户选择的第一个文件
-                        if (!file) return; // 如果没有选择文件，直接返回
-
-                        /**
-                         * 使用 FileReader 读取文件内容
-                         */
-                        const reader = new FileReader();
-
-                        /**
-                         * 当文件读取完成后的处理
-                         */
-                        reader.onload = function (event) {
-                            const data = event.target.result; // 获取读取结果
-                            /**
-                             * 使用 XLSX 库解析 Excel 文件数据
-                             * type: 'array' 表示以ArrayBuffer格式读取
-                             */
-                            const workbook = XLSX.read(data, { type: 'array' });
-
-                            /**
-                             * 获取第一个工作表名称，并获取其工作表对象
-                             */
-                            const sheetName = workbook.SheetNames[0];
-                            const worksheet = workbook.Sheets[sheetName];
-
-                            /**
-                             * 将工作表转换为 JSON 数组格式
-                             */
-                            const jsonData = XLSX.utils.sheet_to_json(worksheet);
-
-                            /**
-                             * 将解析后的 JSON 数据发送到后端
-                             */
-                            sendToBackend(jsonData);
-                        };
-
-                        /**
-                         * 以 ArrayBuffer 形式读取文件内容
-                         */
-                        reader.readAsArrayBuffer(file);
-                    });
-
-                    /**
-                     * 插入文件输入框到页面并触发点击
-                     */
-                    document.body.appendChild(fileInput);
-                    fileInput.click(); // 模拟点击打开文件选择对话框
-                    document.body.removeChild(fileInput); // 用完后移除
-                });
-            }
-        });
-    });
-
-    /**
-     * 发送数据到后端的方法
-     * @param {Array} excelData - 解析后的 Excel 数据（JSON 数组）
-     */
-
-    function sendToBackend(excelData) {
-        if (!excelData || excelData.length <= 1) {
-            console.warn("没有可发送的有效数据");
-            alert("文件中没有有效的数据内容");
-            return;
-        }
-
-        // 跳过第 0 行（标题行），只保留从第 1 行开始的真实数据
-        const validData = excelData.slice(1);
-
-        /**
-         * 定义后端接口地址
-         */
-        const url = "/api/payrollProcessing/import";
-
-        /**
-         * 创建 cb.rest.DynamicProxy 请求代理对象
-         */
-        const proxy = cb.rest.DynamicProxy.create({
-            ensure: {
-                url: url,
-                method: 'POST',
-                options: {
-                    domainKey: 'sanxia' // 可能是环境标识符或其他用途
-                }
-            }
-        });
-
-        /**
-         * 构造请求参数
-         */
-        const params = {
-            data: validData, // 发送解析后的JSON数据
-            create_name:cb.rest.AppContext.user,
-            ytenat_id:cb.context.getTenantId()
-            // loggedInUser: cb.rest.AppContext.user, // 获取当前登录用户的ID
-            // org: viewModel.getCache('FilterViewModel')?.get('org')?.getFromModel()?.__data?.value || '' // 获取组织信息
-        };
-
-        /**
-         * 发送请求到后端 result: code msg
-         */
-        proxy.ensure(params, function (result, res) {
-            const codePrefix = res.code / 100;
-            if (codePrefix!=2) {
-                console.error("请求失败", res.msg);
-                alert(res.msg + "数据导入失败，请查看控制台日志");
-            } else {
-                console.log("后端返回结果", res.msg);
-                alert("数据导入成功！");
-                viewModel.execute('refresh'); // 刷新视图模型
-            }
-        });
-    }
-});
-viewModel.get('btnExport') && viewModel.get('btnExport').on('click', function(data) {
-//Excel导出--onClick
-    let dataRows = viewModel.getGridModel().getSelectedRows();
-    if (dataRows.length === 0) {
-        console.log("未选中");
-        alert("未选中数据");
-    }
-    else{
-        const ids = dataRows.map(item => item.id).join(',');
-        const prefix = cb.utils.getServiceUrl();
-        url = "https://uptest.ctg.com.cn/sanxia-be/api/payrollProcessing/exportExcel";
-
-        const eleForm = document.createElement('form');
-        eleForm.method = 'GET';
-        eleForm.action = url;
-        eleForm.target = '_blank';
-        eleForm.style.display = 'none';
-
-        // 添加 domainKey 参数
-        const eleInput1 = document.createElement('input');
-        eleInput1.name = 'domainKey';
-        eleInput1.value = 'sanxia';
-        eleForm.appendChild(eleInput1);
-
-        // 添加 ids 参数
-        const eleInput2 = document.createElement('input');
-        eleInput2.name = 'ids'; // 后端接收参数名是 ids（你可根据实际改）
-        eleInput2.value = ids;
-        eleForm.appendChild(eleInput2);
-
-        console.log(eleForm);
-        // 添加表单到body
-        document.body.appendChild(eleForm);
-        // 提交表单
-        eleForm.submit();
-        // 移除表单
-        document.body.removeChild(eleForm);
-    }
-
-
-    // cb.rest.ajax(url, { params, method: 'post', domainKey: 'sanxia', responseType: 'blob', callback:(err, res) => {
-    //     if (err) {
-    //             // 错误处理
-    //             cb.utils.alert('下载失败：' + err.message, 'error');
-    //             console.error('导出失败详情:', err);
-    //         } else {
-    //             try {
-    //                 // 提取文件名（如果后端返回了 Content-Disposition 头）
-    //                 let fileName = 'exported_file.xlsx'; // 默认 Excel 文件名
-    //                 const contentDisposition = res.headers['content-disposition']; // 获取响应头中的 Content-Disposition
-
-    //                 if (contentDisposition && contentDisposition.includes('filename=')) {
-    //                     const fileNameEncode = contentDisposition.split('filename=')[1].split(';')[0];
-    //                     fileName = decodeURI(fileNameEncode, 'utf-8').replaceAll('"', '');
-    //                 }
-
-    //                 // 创建 Blob 对象处理 Excel 文件流
-    //                 const blob = new Blob([res.data], {
-    //                     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    //                 });
-
-    //                 // 创建临时下载链接
-    //                 const downloadUrl = window.URL.createObjectURL(blob);
-    //                 const a = document.createElement('a');
-    //                 a.href = downloadUrl;
-    //                 a.download = fileName; // 设置下载文件名
-    //                 a.style.display = 'none';
-    //                 document.body.appendChild(a);
-    //                 a.click();
-
-    //                 // 清理临时资源
-    //                 window.URL.revokeObjectURL(downloadUrl);
-    //                 document.body.removeChild(a);
-
-
-    //                 cb.utils.alert('下载成功', 'success');
-    //             } catch (error) {
-    //                 // 捕获异常并提示用户
-    //                 cb.utils.alert('下载失败：文件处理出错', 'error');
-    //                 console.error('文件处理失败:', error);
-    //             }
-    //         }
-    //     }
-    // });
-});

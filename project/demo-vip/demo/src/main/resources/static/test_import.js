@@ -405,86 +405,74 @@ viewModel.on('customInit', function (data) {
         document.body.appendChild(script); // 将脚本插入到页面中
     };
 
-    /**
-     * 第一步：加载 Excel 解析所需的 xlsx 库
-     * 注意：xlsx.core.min.js 是核心库
-     */
-    loadScript('/iuap-yonbuilder-runtime/opencomponentsystem/public/hrkq-dev/xlsx.core.min.js?domainKey=developplatform', () => {
-        /**
-         * 第二步：加载 xlsx.common.extend.js 扩展库（可选，根据项目需要）
-         */
-        loadScript('/iuap-yonbuilder-runtime/opencomponentsystem/public/hrkq-dev/xlsx.common.extend.js?domainKey=developplatform', () => {
+    loadScript('https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js', () => {
+        if (viewModel.get('button32nd')) {
             /**
-             * 确保两个库都加载完成后再绑定按钮点击事件
+             * 给按钮 button32nd 添加点击事件监听器
              */
-            if (viewModel.get('button32nd')) {
+            viewModel.get('button32nd').on('click', function () {
                 /**
-                 * 给按钮 button32nd 添加点击事件监听器
+                 * 创建一个隐藏的文件输入框，用于选择Excel文件
                  */
-                viewModel.get('button32nd').on('click', function () {
-                    /**
-                     * 创建一个隐藏的文件输入框，用于选择Excel文件
-                     */
-                    const fileInput = document.createElement('input');
-                    fileInput.type = 'file'; // 文件类型
-                    fileInput.accept = '.xlsx,.xls'; // 限制只能选择Excel格式文件
-                    fileInput.style.display = 'none'; // 隐藏该元素
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file'; // 文件类型
+                fileInput.accept = '.xlsx,.xls'; // 限制只能选择Excel格式文件
+                fileInput.style.display = 'none'; // 隐藏该元素
+
+                /**
+                 * 监听文件选择变化事件
+                 */
+                fileInput.addEventListener('change', function (e) {
+                    const file = e.target.files[0]; // 获取用户选择的第一个文件
+                    if (!file) return; // 如果没有选择文件，直接返回
 
                     /**
-                     * 监听文件选择变化事件
+                     * 使用 FileReader 读取文件内容
                      */
-                    fileInput.addEventListener('change', function (e) {
-                        const file = e.target.files[0]; // 获取用户选择的第一个文件
-                        if (!file) return; // 如果没有选择文件，直接返回
-
-                        /**
-                         * 使用 FileReader 读取文件内容
-                         */
-                        const reader = new FileReader();
-
-                        /**
-                         * 当文件读取完成后的处理
-                         */
-                        reader.onload = function (event) {
-                            const data = event.target.result; // 获取读取结果
-                            /**
-                             * 使用 XLSX 库解析 Excel 文件数据
-                             * type: 'array' 表示以ArrayBuffer格式读取
-                             */
-                            const workbook = XLSX.read(data, { type: 'array' });
-
-                            /**
-                             * 获取第一个工作表名称，并获取其工作表对象
-                             */
-                            const sheetName = workbook.SheetNames[0];
-                            const worksheet = workbook.Sheets[sheetName];
-
-                            /**
-                             * 将工作表转换为 JSON 数组格式
-                             */
-                            const jsonData = XLSX.utils.sheet_to_json(worksheet);
-
-                            /**
-                             * 将解析后的 JSON 数据发送到后端
-                             */
-                            sendToBackend(jsonData);
-                        };
-
-                        /**
-                         * 以 ArrayBuffer 形式读取文件内容
-                         */
-                        reader.readAsArrayBuffer(file);
-                    });
+                    const reader = new FileReader();
 
                     /**
-                     * 插入文件输入框到页面并触发点击
+                     * 当文件读取完成后的处理
                      */
-                    document.body.appendChild(fileInput);
-                    fileInput.click(); // 模拟点击打开文件选择对话框
-                    document.body.removeChild(fileInput); // 用完后移除
+                    reader.onload = function (event) {
+                        const data = event.target.result; // 获取读取结果
+                        /**
+                         * 使用 XLSX 库解析 Excel 文件数据
+                         * type: 'array' 表示以ArrayBuffer格式读取
+                         */
+                        const workbook = XLSX.read(data, { type: 'array' });
+
+                        /**
+                         * 获取第一个工作表名称，并获取其工作表对象
+                         */
+                        const sheetName = workbook.SheetNames[0];
+                        const worksheet = workbook.Sheets[sheetName];
+
+                        /**
+                         * 将工作表转换为 JSON 数组格式
+                         */
+                        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+                        /**
+                         * 将解析后的 JSON 数据发送到后端
+                         */
+                        sendToBackend(jsonData);
+                    };
+
+                    /**
+                     * 以 ArrayBuffer 形式读取文件内容
+                     */
+                    reader.readAsArrayBuffer(file);
                 });
-            }
-        });
+
+                /**
+                 * 插入文件输入框到页面并触发点击
+                 */
+                document.body.appendChild(fileInput);
+                fileInput.click(); // 模拟点击打开文件选择对话框
+                document.body.removeChild(fileInput); // 用完后移除
+            });
+        }
     });
 
     /**
