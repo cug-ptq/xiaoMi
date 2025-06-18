@@ -1,0 +1,96 @@
+version: '3.8'
+
+networks:
+  my-network:
+    driver: bridge
+
+services:
+
+  rmqnamesrv:
+    image: apache/rocketmq:4.9.4
+    container_name: rmqnamesrv
+    restart: always
+    ports:
+      - "9876:9876"
+    volumes:
+      - D:/File/docker/Rocketmq/namesrv/logs:/home/rocketmq/logs
+      - D:/File/docker/Rocketmq/broker/store:/home/rocketmq/store
+    environment:
+      - MAX_POSSIBLE_HEAP=100000000
+    command: sh mqnamesrv
+    networks:
+      - my-network
+
+  rocketmq:
+    image: apache/rocketmq:4.9.4
+    container_name: rocketmq
+    restart: always
+    user: root
+    depends_on:
+      - rmqnamesrv
+    ports:
+      - "10911:10911"
+      - "10909:10909"
+    volumes:
+      - D:/File/docker/Rocketmq/broker/logs:/home/rocketmq/logs
+      - D:/File/docker/Rocketmq/broker/store:/home/rocketmq/store
+      - D:/File/docker/Rocketmq/broker/conf/broker.conf:/home/rocketmq/rocketmq-4.9.4/conf/broker.conf
+    environment:
+      - NAMESRV_ADDR=rmqnamesrv:9876
+      - MAX_POSSIBLE_HEAP=200000000
+    command: sh mqbroker -c ../conf/broker.conf
+    networks:
+      - my-network
+
+  rocketmq-dashboard:
+    image: apacherocketmq/rocketmq-dashboard:latest
+    container_name: rocketmq-dashboard
+    ports:
+      - "18080:8080"
+    environment:
+      - JAVA_OPTS=-Drocketmq.namesrv.addr=rmqnamesrv:9876 -Drocketmq.config.isVIPChannel=false
+    depends_on:
+      - rmqnamesrv
+    networks:
+      - my-network
+
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    restart: always
+    ports:
+      - "13306:3306"
+    volumes:
+      - D:/File/docker/Mysql/data:/var/lib/mysql
+      - D:/File/docker/Mysql/config:/etc/mysql/conf.d
+    environment:
+      - MYSQL_ROOT_PASSWORD=ptq123456
+    networks:
+      - my-network
+
+  redis:
+    image: redis:7.4.2
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - D:/File/docker/Redis/conf/redis.conf:/etc/redis/redis.conf
+      - D:/File/docker/Redis/data:/data
+    command: redis-server /etc/redis/redis.conf
+    networks:
+      - my-network
+
+  xiaomi:
+    build:
+      context: ./xiaomi       # 项目根目录
+      dockerfile: Dockerfile
+    container_name: xiaomi
+    depends_on:
+      - mysql
+      - redis
+      - rocketmq
+    ports:
+      - "8080:8080"
+    networks:
+      - my-network

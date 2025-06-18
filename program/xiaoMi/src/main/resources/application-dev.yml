@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 9999
 
 redis:
   sdk:
@@ -24,8 +24,20 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 
-## ===== RocketMQ
-#rocketmq.name-server=rmqnamesrv:9876  # NameServer
-#rocketmq.producer.group=my-producer-group
+rocketmq:
+    name-server: localhost:9876
+    producer:
+      group: my-producer-group  # 生产者组
+      send-message-timeout: 10000
+    consumer:
+      group: my-consumer-group  # 消费者组
 
-#rocketmq.consumer.group=my-consumer-group
+# MyBatis
+mybatis:
+  # 指定 MyBatis 的全局配置文件位置（可选）
+  # config-location: classpath:mybatis/mybatis-config.xml
+
+  # 指定 Mapper XML 文件的位置
+  mapper-locations: classpath:/mapper/*.xml
+  # 配置类型别名包路径
+  type-aliases-package: com.example.xiaomi.dao

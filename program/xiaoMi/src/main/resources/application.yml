@@ -1,6 +1,6 @@
 spring:
   application:
-    name: xiaomi
+    name: xiaMi
   profiles:
-        active: dev
-#    active: prod
+#        active: dev
+    active: prod

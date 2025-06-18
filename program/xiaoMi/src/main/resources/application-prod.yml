@@ -18,14 +18,27 @@ redis:
 # ===== MySQL
 spring:
   datasource:
-    url: jdbc:mysql://mysql:13306/xiaomi?serverTimezone=GMT%2B8&useSSL=false
-    username: root
+    url: jdbc:mysql://mysql:3306/xiaomi?serverTimezone=GMT%2B8&useSSL=false
+    username: ptq
     password: ptq123456
     driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
 
+mybatis:
+  # 指定 MyBatis 的全局配置文件位置（可选）
+  #  config-location: classpath:mybatis/mybatis-config.xml
+  # 指定 Mapper XML 文件的位置
+  mapper-locations: classpath:/mapper/*.xml
+  # 配置类型别名包路径
+  type-aliases-package: com.example.xiaomi.dao
 
-## ===== RocketMQ
-#rocketmq.name-server=rmqnamesrv:9876  # NameServer
-#rocketmq.producer.group=my-producer-group
-
-#rocketmq.consumer.group=my-consumer-group
+# RocketMQ
+rocketmq:
+  name-server: rmqnamesrv:9876
+  producer:
+    group: my-producer-group  # 生产者组
+    send-message-timeout: 10000
+  consumer:
+    group: my-consumer-group  # 消费者组

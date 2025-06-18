@@ -4,11 +4,6 @@ import lombok.*;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-/**
- * @author Fuzhengwei bugstack.cn @小傅哥
- * @description Redis 连接配置 <a href="https://github.com/redisson/redisson/tree/master/redisson-spring-boot-starter">redisson-spring-boot-starter</a>
- * @create 2023-09-03 16:51
- */
 @Component
 @Data
 @ConfigurationProperties(prefix = "redis.sdk.config", ignoreInvalidFields = true)
