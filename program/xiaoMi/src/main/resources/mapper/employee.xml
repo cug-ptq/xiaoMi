@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.xiaomi.dao.EmployMapper">
+    <!-- 新增 -->
+    <insert id="insertEmployee" parameterType="com.example.xiaomi.entity.Employee" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO xiaomi.employee (
+            name, gender, phone, email,
+            birth_date, hire_date, manager_id,
+            position_id, status, gmt_created, gmt_modify
+        ) VALUES (
+                     #{name}, #{gender}, #{phone}, #{email},
+                     #{birthDate}, #{hireDate}, #{managerId},
+                     #{positionId}, #{status}, NOW(), NOW()
+                 )
+    </insert>
+
+    <!-- 删除（根据ID） -->
+    <delete id="deleteEmployeeById">
+        DELETE FROM xiaomi.employee WHERE id = #{id}
+    </delete>
+
+    <!-- 修改（仅更新部分字段） -->
+    <update id="updateEmployeeById">
+        UPDATE xiaomi.employee
+        SET
+            name = #{name},
+            gender = #{gender},
+            phone = #{phone},
+            email = #{email},
+            manager_id = #{managerId},
+            position_id = #{positionId},
+            status = #{status},
+            gmt_modify = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据ID查询 -->
+    <select id="getEmployeeById" resultType="com.example.xiaomi.entity.Employee">
+        SELECT
+            id, name, gender, phone, email, birth_date, hire_date,
+            manager_id, position_id, status, gmt_created, gmt_modify
+        FROM xiaomi.employee
+        WHERE id = #{id}
+    </select>
+</mapper>

@@ -31,6 +31,11 @@ public class RedissonService implements IRedisService {
     }
 
     @Override
+    public void delete(String key) {
+        redissonClient.getBucket(key).delete();
+    }
+
+    @Override
     public <T> RQueue<T> getQueue(String key) {
         return redissonClient.getQueue(key);
     }

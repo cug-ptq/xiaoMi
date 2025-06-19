@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.xiaomi.dao.ProductMapper">
+    <!-- 新增 -->
+    <!-- 添加商品 -->
+    <insert id="insertProduct" parameterType="com.example.xiaomi.entity.Product" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO xiaomi.Product(name, stock)
+        VALUES(#{name}, #{stock})
+    </insert>
+
+    <!-- 查询商品详情（带缓存） -->
+    <select id="selectProductById" resultType="com.example.xiaomi.entity.Product">
+        SELECT id, name, stock
+        FROM xiaomi.Product
+        WHERE id = #{id}
+    </select>
+
+    <!-- 仅查询库存（带缓存） -->
+    <select id="selectStockById" resultType="Integer">
+        SELECT stock
+        FROM xiaomi.Product
+        WHERE id = #{id}
+    </select>
+
+    <!-- 扣减库存 -->
+    <update id="deduceStockById" parameterType="com.example.xiaomi.entity.Product">
+        UPDATE xiaomi.Product
+        SET
+        stock = stock - #{stock}
+        WHERE id = #{id}
+        AND stock >= #{stock}
+    </update>
+</mapper>

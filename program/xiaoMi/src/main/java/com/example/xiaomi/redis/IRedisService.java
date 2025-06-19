@@ -33,6 +33,8 @@ public interface IRedisService {
      */
     <T> T getValue(String key);
 
+    void delete(String key);
+
     /**
      * 获取队列
      *

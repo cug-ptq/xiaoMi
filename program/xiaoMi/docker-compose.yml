@@ -3,6 +3,7 @@ version: '3.8'
 networks:
   my-network:
     driver: bridge
+    external: true
 
 services:
 
@@ -83,13 +84,13 @@ services:
 
   xiaomi:
     build:
-      context: ./xiaomi       # 项目根目录
+#      context: ./xiaomi       # 项目根目录 这里在同一个目录下 所以不用
       dockerfile: Dockerfile
     container_name: xiaomi
-    depends_on:
-      - mysql
-      - redis
-      - rocketmq
+#    depends_on:
+#      - mysql
+#      - redis
+#      - rocketmq
     ports:
       - "8080:8080"
     networks:
